@@ -1,6 +1,10 @@
 package placelib
 
-import "gorm.io/gorm"
+import (
+	"encoding/json"
+
+	"gorm.io/gorm"
+)
 
 type Tile struct {
 	gorm.Model
@@ -13,4 +17,9 @@ type Tile struct {
 
 type ServerTileUpdate struct {
 	newTiles []Tile
+}
+
+type ClientRPC struct {
+	RpcName string          `json:"rpcName"`
+	Payload json.RawMessage `json:"payload"`
 }
