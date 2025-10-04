@@ -69,6 +69,8 @@ func wsProcessRecv(c *websocket.Conn) {
 }
 
 func wsEndpoint(w http.ResponseWriter, r *http.Request) {
+	log.Println("got a tile from the server")
+
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("couldn't upgrade websocket connection: ", err)
@@ -89,6 +91,8 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 	// For sending stuff
 	for {
 		sendTile := <-wsCh
+
+		log.Println("sending a tile to the client")
 
 		sendTileJsonBytes, err := json.Marshal(ServerUpdate{UpdateType: "serverTileUpdate", Payload: sendTile})
 		if err != nil {
