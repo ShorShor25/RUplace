@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import { signIn } from 'next-auth/react'
 
 export default function RUplaceLanding() {
   const [isLogin, setIsLogin] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    signIn("discord");
     console.log('Form submitted');
   };
 
@@ -12,7 +14,7 @@ export default function RUplaceLanding() {
     <div className="flex h-screen w-full bg-black">
       {/* Left Side - Description with Canvas */}
       <div className="relative w-1/2 flex flex-col justify-center items-center p-16 overflow-hidden">
-        
+
         <div className="relative z-10 max-w-xl space-y-8">
           <div className="space-y-4">
             <h1 className="text-8xl font-black tracking-tighter text-white" style={{ fontFamily: 'monospace' }}>
@@ -20,7 +22,7 @@ export default function RUplaceLanding() {
             </h1>
             <div className="h-1 w-32 bg-red-600"></div>
           </div>
-          
+
           <p className="text-2xl text-gray-300 leading-relaxed font-light">
             A collaborative pixel canvas for the Rutgers community. Create, collaborate, and leave your mark in real-time.
           </p>
@@ -57,21 +59,19 @@ export default function RUplaceLanding() {
           <div className="flex space-x-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
             <button
               onClick={() => setIsLogin(true)}
-              className={`flex-1 py-4 px-6 rounded-xl font-bold transition-all text-sm tracking-wide ${
-                isLogin
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
+              className={`flex-1 py-4 px-6 rounded-xl font-bold transition-all text-sm tracking-wide ${isLogin
+                ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
+                : 'text-gray-500 hover:text-gray-900'
+                }`}
             >
               LOGIN
             </button>
             <button
               onClick={() => setIsLogin(false)}
-              className={`flex-1 py-4 px-6 rounded-xl font-bold transition-all text-sm tracking-wide ${
-                !isLogin
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
+              className={`flex-1 py-4 px-6 rounded-xl font-bold transition-all text-sm tracking-wide ${!isLogin
+                ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
+                : 'text-gray-500 hover:text-gray-900'
+                }`}
             >
               SIGN UP
             </button>
