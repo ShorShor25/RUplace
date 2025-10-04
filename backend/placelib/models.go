@@ -15,8 +15,13 @@ type Tile struct {
 	Long   float64 `json:"long"`
 }
 
+type ServerUpdate struct {
+	UpdateType string `json:"updateType"`
+	Payload    any    `json:"payload"`
+}
+
 type ServerTileUpdate struct {
-	newTiles []Tile
+	NewTiles []Tile `json:"newTiles"`
 }
 
 type ClientRPC struct {
