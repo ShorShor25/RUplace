@@ -83,7 +83,10 @@ export default function Map() {
     map.on('style.load', () => {
       map.getStyle().layers?.forEach(layer => {
         if(layer.type === 'fill-extrusion') //remove 3D layers
-          map.removeLayer(layer.id);
+        {
+          map.setPaintProperty(layer.id, 'fill-extrusion-height', 0);
+          map.setPaintProperty(layer.id, 'fill-extrusion-base', 0);
+        }
         if(layer.type === 'symbol' && layer.layout?.['text-field']) //remove building names
         {
           const id = layer.id.toLowerCase();
