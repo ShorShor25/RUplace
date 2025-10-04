@@ -8,21 +8,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Disable CORS for now
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
 const ADDR = "127.0.0.1:8080"
 
-func wsEndpoint(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("couldn't upgrade websocket connection: ", err)
-		return
-	}
-	defer c.Close()
-
-	// Main loop for receiving stuff
+func wsProcessRecv(c *websocket.Conn, wsChan *chan []byte) {
 	for {
 		msgType, msg, err := c.ReadMessage()
 		if err != nil {
@@ -51,8 +44,39 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 			log.Println("invalid RPC name ", rpc.RpcName)
 
 		}
-
 		log.Println("handled msg: msgType ", msgType, " msg ", msg)
+	}
+}
+
+func wsEndpoint(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("couldn't upgrade websocket connection: ", err)
+		return
+	}
+	defer c.Close()
+
+	// Insert to channel
+	wsCh := make(chan ServerTileUpdate)
+	wsRecvCh := make(chan []byte)
+
+	OutputChannelsMtx.Lock()
+	OutputChannels = append(OutputChannels, &wsCh)
+	OutputChannelsMtx.Unlock()
+
+	// Main loop for receiving stuff
+	go wsProcessRecv(c, &wsRecvCh)
+
+	// For sending stuff
+	for {
+
+		sendTile := <-wsCh
+		sendTileJsonBytes, err := json.Marshal(sendTile)
+		if err != nil {
+			log.Println("couldn't convert tile update event to json: ", err)
+		}
+
+		c.WriteMessage(websocket.BinaryMessage, sendTileJsonBytes)
 	}
 }
 

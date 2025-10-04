@@ -16,7 +16,7 @@ type Tile struct {
 }
 
 type ServerTileUpdate struct {
-	newTiles []Tile
+	NewTiles []Tile `json:"newTiles"`
 }
 
 type ClientRPC struct {
