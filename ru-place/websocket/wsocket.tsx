@@ -1,44 +1,37 @@
 import { Tile } from "../shared/tile";
 
-let socket: WebSocket | null = null;
+export let socket: WebSocket | null = null;
 
-export function initSocket() {
-    if (socket != null) {
-        return;
-    }
-    socket = new WebSocket("ws://127.0.0.1:8080/ws");
-}
-
-function awaitOpenConnection(): Promise<void> {
+export async function initSocket(): Promise<void> {
     return new Promise((resolve, reject) => {
-        if (socket!.readyState === WebSocket.OPEN) {
+        if (socket != null && socket.readyState === WebSocket.OPEN) {
             resolve();
-        } else {
-            socket!.addEventListener("open", (event) => {
-                console.log("WebSocket open.");
-                resolve();
-            });
-
-            socket!.addEventListener("message", (event) => {
-                console.log("Message from server ", event!.data);
-                resolve();
-            });
-
-            socket!.addEventListener("close", (event) => {
-                console.log("WebSocket closed.");
-                reject();
-            });
-
-            socket!.addEventListener("error", (event) => {
-                console.error("WebSocket error observed: ", event);
-                reject();
-            });
+            return;
         }
-    })
+
+        socket = new WebSocket("ws://127.0.0.1:8080/ws");
+
+        socket.addEventListener("open", (event) => {
+            resolve();
+        });
+
+        socket.addEventListener("message", (event) => {
+            forwardServerUpdateToGraphics(event.data);
+        });
+
+        socket.addEventListener("error", (event) => {
+            console.error("WebSocket error observed: ", event);
+            reject(event);
+        });
+    });
 }
 
 export async function sendTileUpdate(tile: Tile) {
-    await awaitOpenConnection();
-    const rpc = { "rpcName": "clientTileUpdate", "payload": tile };
-    socket!.send(JSON.stringify(rpc))
+    await initSocket();
+    const rpc = { rpcName: "clientTileUpdate", payload: tile };
+    socket!.send(JSON.stringify(rpc));
+}
+
+function forwardServerUpdateToGraphics(data: any) {
+    console.log("Forwarding server update to graphics: ", data);
 }

@@ -8,8 +8,8 @@ import (
 
 type Tile struct {
 	gorm.Model
-	X      uint64  `json:"x"`
-	Y      uint64  `json:"y"`
+	X      uint64  `json:"x" gorm:"index:no_coord_overlap,unique"`
+	Y      uint64  `json:"y" gorm:"index:no_coord_overlap,unique"`
 	Colour uint8   `json:"color"`
 	Lat    float64 `json:"lat"`
 	Long   float64 `json:"long"`
