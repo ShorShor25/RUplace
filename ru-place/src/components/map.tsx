@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import maplibregl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import Grid from '@/components/grid';
 
 // ------------------------------------------ //
 
@@ -31,23 +32,6 @@ export default function Map() {
 
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
-
-  // --------------------- //
-
-  function getCenter(): { x: number; y: number } | null {
-    if(!mapRef.current) 
-      return null;
-
-    const center = mapRef.current.getCenter();
-    return { x: center.lng, y: center.lat };
-  }
-
-  function getZoom(): number | null {
-    if(!mapRef.current) 
-      return null;
-
-    return mapRef.current.getZoom();
-  }
 
   // --------------------- //
 
@@ -82,13 +66,11 @@ export default function Map() {
     map.touchZoomRotate?.disableRotation();
     map.on('style.load', () => {
       map.getStyle().layers?.forEach(layer => {
-        if(layer.type === 'fill-extrusion') //remove 3D layers
-        {
+        if(layer.type === 'fill-extrusion') { //remove 3D layers
           map.setPaintProperty(layer.id, 'fill-extrusion-height', 0);
           map.setPaintProperty(layer.id, 'fill-extrusion-base', 0);
         }
-        if(layer.type === 'symbol' && layer.layout?.['text-field']) //remove building names
-        {
+        if(layer.type === 'symbol' && layer.layout?.['text-field']) { //remove building names
           const id = layer.id.toLowerCase();
           if(!id.includes('highway') && !id.includes('road'))
             map.removeLayer(layer.id);
@@ -117,8 +99,7 @@ export default function Map() {
     //add layers to map
     if(map.getSource('ru-buildings')) 
       (map.getSource('ru-buildings') as maplibregl.GeoJSONSource).setData(buildingData);
-    else 
-    {
+    else {
       map.addSource('ru-buildings', {
         type: 'geojson',
         data: buildingData
@@ -139,7 +120,7 @@ export default function Map() {
       });
 
       const loadIcons = async () => {
-        for (const [_, name] of Object.entries(CATEGORY_ICONS)) {
+        for(const [_, name] of Object.entries(CATEGORY_ICONS)) {
           const imgUrl = `/icons/${name}.svg`;
           const img = await new Promise<HTMLImageElement>((resolve, reject) => {
             const i = new Image();
@@ -195,9 +176,9 @@ export default function Map() {
   // --------------------- //
 
   return (
-    <div
-      ref={mapContainer}
-      style={{ width: '100%', height: '100vh' }}
-    />
+  <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+    <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
+    <Grid map={map} color="rgba(0,0,0,0.3)" />
+  </div>
   );
 }
