@@ -92,7 +92,7 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 	for {
 		sendTile := <-wsCh
 
-		log.Println("sending a tile to the client")
+		log.Println("sending a tile to the client, namely", sendTile)
 
 		sendTileJsonBytes, err := json.Marshal(ServerUpdate{UpdateType: "serverTileUpdate", Payload: sendTile})
 		if err != nil {

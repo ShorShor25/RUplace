@@ -37,11 +37,14 @@ func UpdateTileDbLoop() {
 		InsertChannelMtx.Unlock()
 
 		// Send these updates to the clients
-		OutputChannelsMtx.Lock()
-		for _, ch := range OutputChannels {
-			*ch <- updatesToSend
+		// Only send if there's something to send
+		if len(updatesToSend.NewTiles) > 0 {
+			OutputChannelsMtx.Lock()
+			for _, ch := range OutputChannels {
+				*ch <- updatesToSend
+			}
+			OutputChannelsMtx.Unlock()
 		}
-		OutputChannelsMtx.Unlock()
 
 		// Clear the updates for the next series of updates
 		updatesToSend.NewTiles = updatesToSend.NewTiles[0:0]
