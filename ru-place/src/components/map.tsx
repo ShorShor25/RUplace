@@ -2,14 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import maplibregl from 'maplibre-gl';
-import { LatLngLiteral } from 'leaflet';
+import maplibregl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
+import { LatLngBoundsLiteral, LatLngLiteral, LatLngTuple } from 'leaflet';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import build from 'next/dist/build';
 
 // ------------------------------------------ //
 
-const STARTING_POSITION: LatLngLiteral = {lat: 40.4987, lng: -74.446};
+const STARTING_POSITION: LngLatLike = [ -74.446, 40.4987 ];
 const STARTING_ZOOM = 17;
+
+const BOUNDS: LngLatBoundsLike = [
+  [ -74.603555, 40.419001],
+  [ -74.229596, 40.578769]
+];
 
 // ------------------------------------------ //
 
@@ -44,6 +50,7 @@ export default function Map() {
       style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=xRogtnvC9fkRPguF3D6S',
       center: STARTING_POSITION,
       zoom: STARTING_ZOOM,
+      maxBounds: BOUNDS,
       pitch: 0,
       bearing: 0
     });
@@ -54,6 +61,12 @@ export default function Map() {
       map.getStyle().layers?.forEach(layer => {
         if(layer.type === 'fill-extrusion') //remove 3D layers
           map.removeLayer(layer.id);
+        if(layer.type === 'symbol' && layer.layout?.['text-field']) //remove building names
+        {
+          const id = layer.id.toLowerCase();
+          if(!id.includes('highway') && !id.includes('road'))
+            map.removeLayer(layer.id);
+        }
       });
 
       mapRef.current = map;
@@ -70,6 +83,12 @@ export default function Map() {
     if(!map || !buildingData)
       return;
 
+    //filter out parking
+    buildingData.features = buildingData.features.filter(
+      (feature: any) => feature.properties.category.toLowerCase() !== 'parking'
+    );
+
+    //add layers to map
     if(map.getSource('ru-buildings')) 
       (map.getSource('ru-buildings') as maplibregl.GeoJSONSource).setData(buildingData);
     else 
@@ -91,6 +110,23 @@ export default function Map() {
         type: 'line',
         source: 'ru-buildings',
         paint: { 'line-color': '#f1005d', 'line-width': 2 }
+      });
+
+      map.addLayer({
+        id: 'ru-buildings-labels',
+        type: 'symbol',
+        source: 'ru-buildings',
+        layout: {
+          'text-field': ['get', 'name'],
+          'text-size': 14,
+          'text-anchor': 'center',
+          'text-allow-overlap': false
+        },
+        paint: {
+          'text-color': '#000000',
+          'text-halo-color': '#ffffff',
+          'text-halo-width': 1
+        }
       });
     }
   }, [buildingData, map]);
