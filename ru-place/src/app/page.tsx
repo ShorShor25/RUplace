@@ -10,6 +10,9 @@ export default function Home() {
     initSocket();
     const tile: Tile = { "x": 1, "y": 2, "color": 6, "lat": 69.69, "long": 47.74 };
     sendTileUpdate(tile);
+    sendTileUpdate(tile);
+    sendTileUpdate(tile);
+    sendTileUpdate(tile);
   }, []);
 
   return (

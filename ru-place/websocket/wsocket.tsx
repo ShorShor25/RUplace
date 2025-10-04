@@ -20,7 +20,7 @@ function awaitOpenConnection(): Promise<void> {
             });
 
             socket!.addEventListener("message", (event) => {
-                console.log("Message from server ", event!.data);
+                forwardServerUpdateToGraphics(event!.data);
                 resolve();
             });
 
@@ -41,4 +41,8 @@ export async function sendTileUpdate(tile: Tile) {
     await awaitOpenConnection();
     const rpc = { "rpcName": "clientTileUpdate", "payload": tile };
     socket!.send(JSON.stringify(rpc))
+}
+
+function forwardServerUpdateToGraphics(data: any) {
+    console.log("Forwarding server update to graphics: ", data);
 }
