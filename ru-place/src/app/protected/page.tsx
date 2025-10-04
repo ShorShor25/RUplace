@@ -1,5 +1,3 @@
-'use client';
-
 import Map from '@/components/map';
 import { sendTileUpdate } from '../../../websocket/wsocket';
 import { Tile } from '../../../shared/tile'
@@ -10,7 +8,7 @@ import { redirect } from "next/navigation";
 export default async function Home() {
     const session = await getServerSession(authOptions);
     if (!session) {
-        // redirect("/");
+        redirect("/");
     }
     const tile: Tile = { "x": 1, "y": 2, "color": 6, "lat": 69.69, "long": 47.74 };
     sendTileUpdate(tile);
