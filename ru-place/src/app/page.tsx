@@ -1,22 +1,20 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import Map, { MapHandle } from '@/components/map';
-import Grid from '@/components/grid';
-import { connect } from '../../websocket/wsocket';
+import Map from '@/components/map';
+import { initSocket, sendTileUpdate } from '../../websocket/wsocket';
+import { Tile } from '../../shared/tile'
+import { useEffect } from 'react'
 
 export default function Home() {
-  const mapRef = useRef<MapHandle>(null);
-  const [mapReady, setMapReady] = useState<MapHandle | null>(null);
-
-  connect();
+  useEffect(() => {
+    initSocket();
+    const tile: Tile = { "x": 1, "y": 2, "color": 6, "lat": 69.69, "long": 47.74 };
+    sendTileUpdate(tile);
+  }, []);
 
   return (
     <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
-      <Map ref={mapRef} onMapLoad={setMapReady} />
-      {mapReady && (
-        <Grid mapHandle={mapReady} cellSize={50} color="rgba(0,0,0,0.3)" />
-      )}
+      <Map/>
     </main>
   );
 }

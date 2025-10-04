@@ -1,22 +1,44 @@
 import { Tile } from "../shared/tile";
 
-export function connect() {
-    const socket = new WebSocket("ws://127.0.0.1:8080/ws");
+let socket: WebSocket | null = null;
 
-    socket.addEventListener("open", (event) => {
-        const tile: Tile = { "x": 1, "y": 2, "color": 6, "lat": 69.69, "long": 47.74 };
-        socket.send(JSON.stringify(tile));
-    });
+export function initSocket() {
+    if (socket != null) {
+        return;
+    }
+    socket = new WebSocket("ws://127.0.0.1:8080/ws");
+}
 
-    socket.addEventListener("message", (event) => {
-        console.log("Message from server ", event.data);
-    });
+function awaitOpenConnection(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (socket!.readyState === WebSocket.OPEN) {
+            resolve();
+        } else {
+            socket!.addEventListener("open", (event) => {
+                console.log("WebSocket open.");
+                resolve();
+            });
 
-    socket.addEventListener("close", (event) => {
-        console.log("WebSocket closed.");
-    });
+            socket!.addEventListener("message", (event) => {
+                console.log("Message from server ", event!.data);
+                resolve();
+            });
 
-    socket.addEventListener("error", (event) => {
-        console.error("WebSocket error observed: ", event);
-    });
+            socket!.addEventListener("close", (event) => {
+                console.log("WebSocket closed.");
+                reject();
+            });
+
+            socket!.addEventListener("error", (event) => {
+                console.error("WebSocket error observed: ", event);
+                reject();
+            });
+        }
+    })
+}
+
+export async function sendTileUpdate(tile: Tile) {
+    await awaitOpenConnection();
+    const rpc = { "rpcName": "clientTileUpdate", "payload": tile };
+    socket!.send(JSON.stringify(rpc))
 }
