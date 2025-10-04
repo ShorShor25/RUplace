@@ -28,3 +28,10 @@ type ClientRPC struct {
 	RpcName string          `json:"rpcName"`
 	Payload json.RawMessage `json:"payload"`
 }
+
+type ClientTileFillParams struct {
+	XMin uint64
+	XMax uint64
+	YMin uint64
+	YMax uint64
+}
