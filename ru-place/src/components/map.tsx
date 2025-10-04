@@ -180,7 +180,7 @@ export default function Map() {
   return (
   <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
     <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-    <Grid map={map} color="rgba(0,0,0,0.3)" />
+    <Grid map={map} opacity={0.5} />
   </div>
   );
 }
