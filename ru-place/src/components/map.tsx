@@ -156,7 +156,7 @@ export default function Map() {
           source: 'ru-buildings',
           layout: {
             'text-field': ['get', 'name'],
-            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-font': ['Open Sans', 'Arial Unicode MS'],
             'text-offset': [1, 0],
             'text-anchor': 'left',
             'icon-image': [
@@ -170,12 +170,19 @@ export default function Map() {
             ],
             'icon-size': 0.05, // adjust to fit
             'icon-allow-overlap': true,
-            'text-allow-overlap': false
+            'text-allow-overlap': false,
+            'text-size': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              16, 12,  // zoom 16 → 12px
+              20, 18   // zoom 20 → 18px
+            ]
           },
           paint: {
             'text-color': '#000',
             'text-halo-color': '#fff',
-            'text-halo-width': 1
+            'text-halo-width': 0.5
           }
         });
       })
