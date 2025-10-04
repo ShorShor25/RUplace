@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 
 export default function RUplaceLanding() {
-  const [isLogin, setIsLogin] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form submitted');
+  const handleDiscordLogin = () => {
+    // Handle Discord OAuth login
+    console.log('Discord login initiated');
+    // window.location.href = 'YOUR_DISCORD_OAUTH_URL';
   };
 
   return (
@@ -50,146 +50,24 @@ export default function RUplaceLanding() {
         </div>
       </div>
 
-      {/* Right Side - Auth Forms */}
+      {/* Right Side - Discord Login */}
       <div className="w-1/2 bg-white flex flex-col justify-center items-center p-16">
         <div className="w-full max-w-md space-y-8">
-          {/* Toggle Tabs */}
-          <div className="flex space-x-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-4 px-6 rounded-xl font-bold transition-all text-sm tracking-wide ${
-                isLogin
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              LOGIN
-            </button>
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-4 px-6 rounded-xl font-bold transition-all text-sm tracking-wide ${
-                !isLogin
-                  ? 'bg-red-600 text-white shadow-lg shadow-red-600/30'
-                  : 'text-gray-500 hover:text-gray-900'
-              }`}
-            >
-              SIGN UP
-            </button>
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl font-black text-gray-900">Welcome</h2>
+            <p className="text-gray-600 text-lg">Sign in with Discord to start creating</p>
           </div>
 
-          {/* Login Form */}
-          {isLogin ? (
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="email" className="block text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition font-medium"
-                  placeholder="netid@rutgers.edu"
-                />
-              </div>
-              <div>
-                <label htmlFor="password" className="block text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition font-medium"
-                  placeholder="••••••••"
-                />
-              </div>
-              <div className="flex items-center justify-between pt-2">
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-5 h-5 text-red-600 border-2 border-gray-300 rounded focus:ring-red-500"
-                  />
-                  <span className="ml-3 text-sm font-medium text-gray-700">Remember me</span>
-                </label>
-                <button className="text-sm text-red-600 hover:text-red-700 font-bold">
-                  Forgot?
-                </button>
-              </div>
-              <button
-                onClick={handleSubmit}
-                className="w-full bg-red-600 text-white py-4 px-6 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/40 text-sm tracking-wide mt-8"
-              >
-                ENTER RUPLACE →
-              </button>
-            </div>
-          ) : (
-            /* Sign Up Form */
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="signup-name" className="block text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">
-                  Full Name
-                </label>
-                <input
-                  id="signup-name"
-                  type="text"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition font-medium"
-                  placeholder="Scarlet Knight"
-                />
-              </div>
-              <div>
-                <label htmlFor="signup-email" className="block text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">
-                  Rutgers Email
-                </label>
-                <input
-                  id="signup-email"
-                  type="email"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition font-medium"
-                  placeholder="netid@rutgers.edu"
-                />
-              </div>
-              <div>
-                <label htmlFor="signup-password" className="block text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">
-                  Password
-                </label>
-                <input
-                  id="signup-password"
-                  type="password"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition font-medium"
-                  placeholder="••••••••"
-                />
-              </div>
-              <div>
-                <label htmlFor="signup-confirm" className="block text-xs font-bold text-gray-500 mb-3 tracking-wider uppercase">
-                  Confirm Password
-                </label>
-                <input
-                  id="signup-confirm"
-                  type="password"
-                  className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition font-medium"
-                  placeholder="••••••••"
-                />
-              </div>
-              <label className="flex items-start cursor-pointer pt-2">
-                <input
-                  type="checkbox"
-                  className="w-5 h-5 text-red-600 border-2 border-gray-300 rounded focus:ring-red-500 mt-0.5"
-                />
-                <span className="ml-3 text-sm text-gray-600 font-medium">
-                  I agree to the community guidelines
-                </span>
-              </label>
-              <button
-                onClick={handleSubmit}
-                className="w-full bg-red-600 text-white py-4 px-6 rounded-xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-600/30 hover:shadow-xl hover:shadow-red-600/40 text-sm tracking-wide mt-8"
-              >
-                CREATE ACCOUNT →
-              </button>
-            </div>
-          )}
-
-          <div className="text-center pt-6">
-            <p className="text-xs text-gray-400 font-medium">
-              By continuing, you agree to our terms and policies
-            </p>
+          <div className="space-y-6 pt-8">
+            <button
+              onClick={handleDiscordLogin}
+              className="w-full bg-[#5865F2] text-white py-5 px-6 rounded-xl font-bold hover:bg-[#4752C4] transition-all shadow-lg shadow-[#5865F2]/30 hover:shadow-xl hover:shadow-[#5865F2]/40 text-base tracking-wide flex items-center justify-center gap-3"
+            >
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
+              </svg>
+              CONTINUE WITH DISCORD
+            </button>
           </div>
         </div>
       </div>
