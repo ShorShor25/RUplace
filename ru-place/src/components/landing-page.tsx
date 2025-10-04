@@ -4,7 +4,7 @@ import { signIn } from 'next-auth/react'
 export default function RUplaceLanding() {
 
   const handleDiscordLogin = () => {
-    signIn("discord")
+    signIn("discord", { callbackUrl: '/protected' })
   };
 
   return (
