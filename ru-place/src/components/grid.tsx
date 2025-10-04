@@ -187,7 +187,6 @@ export default function GridTiles({ map, opacity }: GridProps) {
         pointerEvents: 'none',
         width: '100%',
         height: '100%',
-        zIndex: 1000,
       }}
     />
   );

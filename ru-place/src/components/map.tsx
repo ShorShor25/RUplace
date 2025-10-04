@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import maplibregl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Grid from '@/components/grid';
+import ColorPicker from './picker';
 
 // ------------------------------------------ //
 
@@ -32,6 +33,8 @@ export default function Map() {
 
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+
+  const [selectedColor, setSelectedColor] = useState<number>(0);
 
   // --------------------- //
 
@@ -181,6 +184,7 @@ export default function Map() {
   <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
     <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
     <Grid map={map} opacity={0.5} />
+    <ColorPicker selectedColor={selectedColor} onSelect={setSelectedColor} />
   </div>
   );
 }
