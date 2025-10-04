@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import Map from '@/components/map'
-import { initSocket, sendTileUpdate } from '../../websocket/wsocket'
+import Map from '@/components/map';
+import { initSocket, sendTileUpdate } from '../../websocket/wsocket';
 import { Tile } from '../../shared/tile'
 import { useEffect } from 'react'
 
@@ -16,8 +16,8 @@ export default function Home() {
   }, []);
 
   return (
-    <main style={{ height: '100vh', width: '100%' }}>
-      <Map />
+    <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
+      <Map/>
     </main>
   );
 }
