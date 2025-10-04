@@ -34,6 +34,23 @@ export default function Map() {
 
   // --------------------- //
 
+  function getCenter(): { x: number; y: number } | null {
+    if(!mapRef.current) 
+      return null;
+
+    const center = mapRef.current.getCenter();
+    return { x: center.lng, y: center.lat };
+  }
+
+  function getZoom(): number | null {
+    if(!mapRef.current) 
+      return null;
+
+    return mapRef.current.getZoom();
+  }
+
+  // --------------------- //
+
   /**
    * loads the campus building data, runs once
    */
