@@ -1,6 +1,7 @@
 'use client';
 
 import Map from '@/components/map';
+import RUplaceLanding from '@/components/landing-page';
 import { socket, initSocket, sendTileUpdate } from '../../websocket/wsocket';
 import { Tile } from '../../shared/tile'
 import { useEffect } from 'react'
@@ -16,7 +17,7 @@ export default function Home() {
 
   return (
     <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
-      <Map />
+      <RUplaceLanding />
     </main>
   );
 }
