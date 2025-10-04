@@ -58,7 +58,7 @@ func wsProcessRecv(c *websocket.Conn) {
 				log.Println("couldn't convert tile file event to json: ", err)
 			}
 
-			c.WriteMessage(websocket.BinaryMessage, sendTileJsonBytes)
+			c.WriteMessage(websocket.TextMessage, sendTileJsonBytes)
 
 		default:
 			log.Println("invalid RPC name ", rpc.RpcName)
@@ -99,7 +99,7 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 			log.Println("couldn't convert tile update event to json: ", err)
 		}
 
-		c.WriteMessage(websocket.BinaryMessage, sendTileJsonBytes)
+		c.WriteMessage(websocket.TextMessage, sendTileJsonBytes)
 	}
 }
 
