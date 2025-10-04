@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
+import { signIn } from 'next-auth/react'
 
 export default function RUplaceLanding() {
 
   const handleDiscordLogin = () => {
-    console.log('Discord login initiated');
+    signIn("discord")
   };
 
   return (
