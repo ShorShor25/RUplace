@@ -2,11 +2,14 @@ package placelib
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+var Database *gorm.DB
+var DatabaseCtx context.Context
 
 // Initialize database and return DB instance with context
 func dbInit() (*gorm.DB, context.Context) {
@@ -19,7 +22,7 @@ func dbInit() (*gorm.DB, context.Context) {
 	return db, ctx
 }
 
-func DBMain() {
-	db, ctx := dbInit()
-	fmt.Println(db, ctx)
+func DBInit() {
+	Database, DatabaseCtx = dbInit()
+	log.Println("database ", Database, " context ", DatabaseCtx)
 }

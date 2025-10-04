@@ -31,6 +31,8 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 			log.Println("couldn't turn rpc to clientrpc ", err)
 		}
 
+		log.Println("rpcname is ", rpc.RpcName)
+
 		switch rpc.RpcName {
 		case "clientTileUpdate":
 			InsertChannelMtx.Lock()
