@@ -64,6 +64,8 @@ export default function Map() {
 
     map.dragRotate.disable();
     map.touchZoomRotate?.disableRotation();
+    map.doubleClickZoom.disable();
+    
     map.on('style.load', () => {
       map.getStyle().layers?.forEach(layer => {
         if(layer.type === 'fill-extrusion') { //remove 3D layers
