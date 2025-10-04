@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import maplibregl, { Map } from 'maplibre-gl';
 
 // ------------------------------------------ //
 
@@ -9,7 +10,7 @@ const METERS_PER_CELL = 5;
 // ------------------------------------------ //
 
 interface GridProps {
-  map: maplibregl.Map | null;
+  map: Map | null;
   color?: string;
   lineWidth?: number;
 }
@@ -25,12 +26,12 @@ export default function Grid({
 
   useEffect(() => {
     if(!map || !canvasRef.current) 
-        return;
+      return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     if(!ctx) 
-        return;
+      return;
 
     function resizeCanvas() {
       canvas.width = map!.getContainer().clientWidth;
@@ -38,8 +39,7 @@ export default function Grid({
       drawGrid();
     }
 
-    function drawGrid() 
-    {
+    function drawGrid() {
       if(!ctx || !map) 
         return;
 
@@ -53,8 +53,8 @@ export default function Grid({
 
       const maxBounds = map.getMaxBounds()!;
       const maxNW = maxBounds.getNorthWest();
-      const maxNE = maxBounds.getSouthEast();
-      const centerLat = (maxNW.lat + maxNE.lat) / 2.0;
+      const maxSE = maxBounds.getSouthEast();
+      const centerLat = (maxNW.lat + maxSE.lat) / 2.0;
 
       const cellHeight = METERS_PER_CELL / 111320;
       const cellWidth = METERS_PER_CELL / (111320 * Math.cos(centerLat * Math.PI / 180));
@@ -78,6 +78,29 @@ export default function Grid({
       }
     }
 
+    // ----------------- CLICK HANDLER ----------------- //
+    function onMapClick(e: maplibregl.MapMouseEvent) {
+      if(!map || !map.getMaxBounds()) 
+        return;
+
+      const maxBounds = map.getMaxBounds()!;
+      const maxNW = maxBounds.getNorthWest();
+      const maxSE = maxBounds.getSouthEast();
+      const centerLat = (maxNW.lat + maxSE.lat) / 2.0;
+
+      const cellHeight = METERS_PER_CELL / 111320;
+      const cellWidth = METERS_PER_CELL / (111320 * Math.cos(centerLat * Math.PI / 180));
+
+      const lngOffset = e.lngLat.lng - maxNW.lng;
+      const latOffset = maxNW.lat - e.lngLat.lat;
+
+      const col = Math.floor(lngOffset / cellWidth);
+      const row = Math.floor(latOffset / cellHeight);
+
+      console.log('Clicked grid cell:', { row, col });
+    }
+
+    map.on('click', onMapClick);
     map.on('move', drawGrid);
     map.on('zoom', drawGrid);
     map.on('resize', resizeCanvas);
@@ -85,11 +108,14 @@ export default function Grid({
     resizeCanvas();
 
     return () => {
+      map.off('click', onMapClick);
       map.off('move', drawGrid);
       map.off('zoom', drawGrid);
       map.off('resize', resizeCanvas);
     };
   }, [map, color, lineWidth]);
+
+  // --------------------- //
 
   return (
     <canvas
