@@ -1,13 +1,16 @@
 package placelib
 
-import "net/http"
-import "github.com/gorilla/websocket"
-import "encoding/json"
-import "log"
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/websocket"
+)
 
 var upgrader = websocket.Upgrader{}
 
-const ADDR = "0.0.0.0:8080"
+const ADDR = "127.0.0.1:8080"
 
 func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -30,6 +33,8 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println("couldn't turn rpc to clientrpc ", err)
 		}
+
+		log.Println("rpcname is ", rpc.RpcName)
 
 		switch rpc.RpcName {
 		case "clientTileUpdate":
