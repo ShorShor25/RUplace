@@ -8,7 +8,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
 
 const ADDR = "127.0.0.1:8080"
 
@@ -34,8 +36,6 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 			log.Println("couldn't turn rpc to clientrpc ", err)
 		}
 
-		log.Println("rpcname is ", rpc.RpcName)
-
 		switch rpc.RpcName {
 		case "clientTileUpdate":
 			InsertChannelMtx.Lock()
@@ -48,11 +48,11 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 			InsertChannelMtx.Unlock()
 
 		default:
-			log.Println("invalid RPC name ")
+			log.Println("invalid RPC name ", rpc.RpcName)
 
 		}
 
-		log.Println("got msg: msgType ", msgType, " msg ", msg)
+		log.Println("handled msg: msgType ", msgType, " msg ", msg)
 	}
 }
 
