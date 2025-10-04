@@ -1,17 +1,25 @@
 package placelib
 
 import (
+	"context"
 	"fmt"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
-func init() {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-
+// Initialize database and return DB instance with context
+func dbInit() (*gorm.DB, context.Context) {
+	db, err := gorm.Open(sqlite.Open("ruplace.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	ctx := context.Background()
+	db.AutoMigrate(&Tile{})
+	return db, ctx
 }
 
-func Db() {
-	fmt.Println("Hello db world")
+func DBMain() {
+	db, ctx := dbInit()
+	fmt.Println(db, ctx)
 }
