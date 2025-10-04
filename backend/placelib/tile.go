@@ -2,15 +2,27 @@ package placelib
 
 import (
 	"log"
+	"sync"
 	"time"
 )
 
+var InsertChannel []Tile
+var InsertChannelMtx sync.Mutex
+
 // Update the tile database in a timer loop
 func UpdateTileDbLoop() {
-	dbUpdateTimer := time.NewTimer(500 * time.Millisecond)
+	dbUpdateTimer := time.NewTicker(500 * time.Millisecond)
 
 	for {
 		<-dbUpdateTimer.C
-		log.Print("tile db update fired")
+		log.Println("tile db update fired")
+
+		InsertChannelMtx.Lock()
+
+		log.Println("channel data is ", InsertChannel)
+		clear(InsertChannel)
+
+		InsertChannelMtx.Unlock()
+
 	}
 }
