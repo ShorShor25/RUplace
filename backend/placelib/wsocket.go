@@ -69,9 +69,9 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	// For sending stuff
 	for {
-
 		sendTile := <-wsCh
-		sendTileJsonBytes, err := json.Marshal(sendTile)
+
+		sendTileJsonBytes, err := json.Marshal(ServerUpdate{UpdateType: "serverTileUpdate", Payload: sendTile})
 		if err != nil {
 			log.Println("couldn't convert tile update event to json: ", err)
 		}
