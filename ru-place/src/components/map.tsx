@@ -3,9 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import maplibregl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
-import { LatLngBoundsLiteral, LatLngLiteral, LatLngTuple } from 'leaflet';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import build from 'next/dist/build';
 
 // ------------------------------------------ //
 
@@ -17,6 +15,14 @@ const BOUNDS: LngLatBoundsLike = [
   [ -74.229596, 40.578769]
 ];
 
+const CATEGORY_ICONS: Record<string, string> = {
+  academic: 'book',
+  housing: 'house',
+  studentLife: 'people',
+  healthCare: 'health',
+  default: 'marker'
+};
+
 // ------------------------------------------ //
 
 export default function Map() {
@@ -25,6 +31,23 @@ export default function Map() {
 
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+
+  // --------------------- //
+
+  function getCenter(): { x: number; y: number } | null {
+    if(!mapRef.current) 
+      return null;
+
+    const center = mapRef.current.getCenter();
+    return { x: center.lng, y: center.lat };
+  }
+
+  function getZoom(): number | null {
+    if(!mapRef.current) 
+      return null;
+
+    return mapRef.current.getZoom();
+  }
 
   // --------------------- //
 
@@ -102,32 +125,60 @@ export default function Map() {
         id: 'ru-buildings-fill',
         type: 'fill',
         source: 'ru-buildings',
-        paint: { 'fill-color': '#f28cb1', 'fill-opacity': 0.5 }
+        paint: { 'fill-color': '#4b4b4bff', 'fill-opacity': 0.5 }
       });
 
       map.addLayer({
         id: 'ru-buildings-outline',
         type: 'line',
         source: 'ru-buildings',
-        paint: { 'line-color': '#f1005d', 'line-width': 2 }
+        paint: { 'line-color': '#414141ff', 'line-width': 2 }
       });
 
-      map.addLayer({
-        id: 'ru-buildings-labels',
-        type: 'symbol',
-        source: 'ru-buildings',
-        layout: {
-          'text-field': ['get', 'name'],
-          'text-size': 14,
-          'text-anchor': 'center',
-          'text-allow-overlap': false
-        },
-        paint: {
-          'text-color': '#000000',
-          'text-halo-color': '#ffffff',
-          'text-halo-width': 1
+      const loadIcons = async () => {
+        for (const [_, name] of Object.entries(CATEGORY_ICONS)) {
+          const imgUrl = `/icons/${name}.svg`;
+          const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const i = new Image();
+            i.onload = () => resolve(i);
+            i.onerror = reject;
+            i.src = imgUrl;
+          });
+          if(!map.hasImage(name)) 
+            map.addImage(name, img);
         }
-      });
+      };
+
+      loadIcons().then(() => {
+        map.addLayer({
+          id: 'ru-buildings-icons',
+          type: 'symbol',
+          source: 'ru-buildings',
+          layout: {
+            'text-field': ['get', 'name'],
+            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-offset': [1, 0],
+            'text-anchor': 'left',
+            'icon-image': [
+              'match',
+              ['at', 0, ['get', 'categories']],
+              ['academic'], 'book',
+              ['housing'], 'house',
+              ['healthCare'], 'health',
+              ['studentLife'], 'people',
+              /* default */ 'marker'
+            ],
+            'icon-size': 0.05, // adjust to fit
+            'icon-allow-overlap': true,
+            'text-allow-overlap': false
+          },
+          paint: {
+            'text-color': '#000',
+            'text-halo-color': '#fff',
+            'text-halo-width': 1
+          }
+        });
+      })
     }
   }, [buildingData, map]);
 

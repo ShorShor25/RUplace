@@ -4,6 +4,8 @@ import (
 	"log"
 	"sync"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var InsertChannel []Tile
@@ -19,8 +21,14 @@ func UpdateTileDbLoop() {
 
 		InsertChannelMtx.Lock()
 
-		log.Println("channel data is ", InsertChannel)
-		clear(InsertChannel)
+		for len(InsertChannel) != 0 {
+			tile := InsertChannel[0]
+			InsertChannel = InsertChannel[1:]
+
+			log.Println("tile to insert is ", tile)
+
+			gorm.G[Tile](Database).Create(DatabaseCtx, &tile)
+		}
 
 		InsertChannelMtx.Unlock()
 
