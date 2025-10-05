@@ -37,8 +37,8 @@ export default function RUplaceLanding() {
       <div className="w-1/2 bg-white flex flex-col justify-center items-center p-16">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
-            <h2 className="text-4xl font-black text-gray-900" style={{ fontFamily: "'Press Start 2P', monospace" }}>WELCOME</h2>
-            <p className="text-gray-600 text-lg" style={{ fontFamily: "'Press Start 2P', monospace" }}>Sign in with Discord to start creating</p>
+            <h2 className="text-4xl font-black text-gray-900" style={{ fontFamily: "'Press Start 2P', monospace" }}>WELCOME!</h2>
+            <p className="text-gray-600 text-lg" style={{ fontFamily: "'Press Start 2P', monospace" }}>Sign in with Discord to start creating!</p>
           </div>
 
           <div className="space-y-6 pt-8">
