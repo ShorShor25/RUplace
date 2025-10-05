@@ -7,7 +7,6 @@ import { COLOURS } from '@/components/picker';
 import { useEffect, useState } from 'react';
 import Map from '@/components/map';
 import LogoutButton from '@/components/logout-button';
-import LocationButton from '@/components/location-button';
 
 export default function Draw() {
   const [tileCanvas, setTileCanvas] = useState<HTMLCanvasElement | null>(null);
@@ -61,12 +60,11 @@ export default function Draw() {
     }
   }, [mustInitialize])
 
-    return (
-        <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
-            <LocationButton />
-            <LogoutButton />
-            <Map tileCanvas={tileCanvas} tileCanvasContext={tileCanvasContext} />
-        </main>
-    );
+  return (
+    <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
+      <LogoutButton />
+      <Map tileCanvas={tileCanvas} tileCanvasContext={tileCanvasContext} />
+    </main>
+  );
 
 }

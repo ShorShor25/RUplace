@@ -2,17 +2,22 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Map } from 'maplibre-gl';
+import { sendTileUpdate } from '../../api/wsocket';
+import { Tile } from '../../shared/tile';
+import { getLocation } from '../../api/location';
 
 // ------------------------------------------ //
 
 const METERS_PER_CELL = 5;
+
+const TEMPORARY_COLOR = 15;
 
 export const TILE_SIZE = 10000;
 export const SQUARE_SIZE = 5
 
 // ------------------------------------------ //
 
-interface Tile {
+interface GridTile {
   id: string;
   image: HTMLCanvasElement; // now an Image instead of HTMLCanvasElement
   tileX: number;
@@ -23,8 +28,8 @@ interface Tile {
 interface GridProps {
   map: Map | null;
   opacity: number;
-  tileCanvas: HTMLCanvasElement
-  tileCanvasContext: CanvasRenderingContext2D
+  tileCanvas: HTMLCanvasElement | null
+  tileCanvasContext: CanvasRenderingContext2D | null
 }
 
 // ------------------------------------------ //
@@ -32,7 +37,7 @@ interface GridProps {
 export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext }: GridProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const glRef = useRef<WebGLRenderingContext | null>(null);
-  const tilesRef = useRef<Tile[]>([]);
+  const tilesRef = useRef<GridTile[]>([]);
   const programRef = useRef<WebGLProgram | null>(null);
   const positionBufferRef = useRef<WebGLBuffer | null>(null);
 
@@ -216,7 +221,7 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
 
   // --------------------- //
 
-  const onMapClick = (e: maplibregl.MapMouseEvent) => {
+  const onMapClick = async (e: maplibregl.MapMouseEvent) => {
     if (!map || !map.getMaxBounds()) return;
 
     const maxBounds = map.getMaxBounds()!;
@@ -242,7 +247,12 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
       if (lng >= imgNW.lng && lng < imgSE.lng && lat <= imgNW.lat && lat > imgSE.lat) {
         const col = Math.floor((lng - imgNW.lng) / cellWidthDeg);
         const row = Math.floor((imgNW.lat - lat) / cellHeightDeg);
-        console.log(`Clicked cell in ${tile.id}:`, { row, col });
+        let loc: [number, number] | null = await getLocation();
+        if (!loc) {
+          console.log("no location");
+        }
+        const tile: Tile = { "x": row, "y": col, "color": TEMPORARY_COLOR, "lat": loc![0], "long": loc![1] }
+        sendTileUpdate(tile);
       }
     }
   };

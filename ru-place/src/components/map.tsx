@@ -27,8 +27,8 @@ export const CATEGORY_ICONS: Record<string, string> = {
 
 
 interface MapProps {
-  tileCanvas: HTMLCanvasElement,
-  tileCanvasContext: CanvasRenderingContext2D
+  tileCanvas: HTMLCanvasElement | null,
+  tileCanvasContext: CanvasRenderingContext2D | null
 }
 
 // ------------------------------------------ //
@@ -186,48 +186,6 @@ export default function Map({ tileCanvas, tileCanvasContext }: MapProps) {
     }
   }, [buildingData, map]);
 
-  useEffect(() => {
-    if (!map) return;
-
-    let marker: maplibregl.Marker | null = null;
-    let intervalId: NodeJS.Timeout | null = null;
-
-    const updateLocation = () => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const newLngLat = [longitude, latitude] as LngLatLike;
-
-          if (!marker) {
-            marker = new maplibregl.Marker({ color: '#ff0000' })
-              .setLngLat(newLngLat)
-              .addTo(map);
-          } else {
-            marker.setLngLat(newLngLat);
-          }
-
-          map.flyTo({
-            center: newLngLat,
-            speed: 0.8,
-            curve: 1.5,
-            essential: true,
-          });
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-        },
-        { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
-      );
-    };
-
-    updateLocation();
-    intervalId = setInterval(updateLocation, 1000);
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      if (marker) marker.remove();
-    };
-  }, [map]);
 
 
   // --------------------- //
