@@ -9,12 +9,12 @@ import ColorPicker from './picker';
 
 // ------------------------------------------ //
 
-const STARTING_POSITION: LngLatLike = [ -74.446, 40.4987 ];
+const STARTING_POSITION: LngLatLike = [-74.446, 40.4987];
 const STARTING_ZOOM = 17;
 
 const BOUNDS: LngLatBoundsLike = [
-  [ -74.603555, 40.419001],
-  [ -74.229596, 40.578769]
+  [-74.603555, 40.419001],
+  [-74.229596, 40.578769]
 ];
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -36,6 +36,8 @@ export default function Map() {
 
   const [selectedColor, setSelectedColor] = useState<number>(0);
 
+  const userMarkerRef = useRef<maplibregl.Marker | null>(null);
+
   // --------------------- //
 
   /**
@@ -52,7 +54,7 @@ export default function Map() {
    * initializes the maplibregl map, runs once
    */
   useEffect(() => {
-    if(mapRef.current || !mapContainer.current) 
+    if (mapRef.current || !mapContainer.current)
       return;
 
     const map = new maplibregl.Map({
@@ -68,16 +70,16 @@ export default function Map() {
     map.dragRotate.disable();
     map.touchZoomRotate?.disableRotation();
     map.doubleClickZoom.disable();
-    
+
     map.on('style.load', () => {
       map.getStyle().layers?.forEach(layer => {
-        if(layer.type === 'fill-extrusion') { //remove 3D layers
+        if (layer.type === 'fill-extrusion') { //remove 3D layers
           map.setPaintProperty(layer.id, 'fill-extrusion-height', 0);
           map.setPaintProperty(layer.id, 'fill-extrusion-base', 0);
         }
-        if(layer.type === 'symbol' && layer.layout?.['text-field']) { //remove building names
+        if (layer.type === 'symbol' && layer.layout?.['text-field']) { //remove building names
           const id = layer.id.toLowerCase();
-          if(!id.includes('highway') && !id.includes('road'))
+          if (!id.includes('highway') && !id.includes('road'))
             map.removeLayer(layer.id);
         }
       });
@@ -93,7 +95,7 @@ export default function Map() {
    * adds the rutgers geojson data to the map, runs on map load and building data load
    */
   useEffect(() => {
-    if(!map || !buildingData)
+    if (!map || !buildingData)
       return;
 
     //filter out parking
@@ -102,7 +104,7 @@ export default function Map() {
     );
 
     //add layers to map
-    if(map.getSource('ru-buildings')) 
+    if (map.getSource('ru-buildings'))
       (map.getSource('ru-buildings') as maplibregl.GeoJSONSource).setData(buildingData);
     else {
       map.addSource('ru-buildings', {
@@ -125,7 +127,7 @@ export default function Map() {
       });
 
       const loadIcons = async () => {
-        for(const [_, name] of Object.entries(CATEGORY_ICONS)) {
+        for (const [_, name] of Object.entries(CATEGORY_ICONS)) {
           const imgUrl = `/icons/${name}.svg`;
           const img = await new Promise<HTMLImageElement>((resolve, reject) => {
             const i = new Image();
@@ -133,7 +135,7 @@ export default function Map() {
             i.onerror = reject;
             i.src = imgUrl;
           });
-          if(!map.hasImage(name)) 
+          if (!map.hasImage(name))
             map.addImage(name, img);
         }
       };
@@ -178,13 +180,57 @@ export default function Map() {
     }
   }, [buildingData, map]);
 
+  useEffect(() => {
+    if (!map) return;
+
+    let marker: maplibregl.Marker | null = null;
+    let intervalId: NodeJS.Timeout | null = null;
+
+    const updateLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const newLngLat = [longitude, latitude] as LngLatLike;
+
+          if (!marker) {
+            marker = new maplibregl.Marker({ color: '#ff0000' })
+              .setLngLat(newLngLat)
+              .addTo(map);
+          } else {
+            marker.setLngLat(newLngLat);
+          }
+
+          map.flyTo({
+            center: newLngLat,
+            speed: 0.8,
+            curve: 1.5,
+            essential: true,
+          });
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        },
+        { enableHighAccuracy: true, maximumAge: 1000, timeout: 5000 }
+      );
+    };
+
+    updateLocation();
+    intervalId = setInterval(updateLocation, 1000);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      if (marker) marker.remove();
+    };
+  }, [map]);
+
+
   // --------------------- //
 
   return (
-  <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
-    <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-    <Grid map={map} opacity={0.5} />
-    <ColorPicker selectedColor={selectedColor} onSelect={setSelectedColor} />
-  </div>
+    <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
+      <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
+      <Grid map={map} opacity={0.5} />
+      <ColorPicker selectedColor={selectedColor} onSelect={setSelectedColor} />
+    </div>
   );
 }

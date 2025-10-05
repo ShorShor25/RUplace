@@ -5,6 +5,7 @@ import { getLocation } from '../../api/location'
 
 const handleClick = async () => {
     const loc = await getLocation();
+    console.log(loc);
 }
 
 export default function LocationButton() {
