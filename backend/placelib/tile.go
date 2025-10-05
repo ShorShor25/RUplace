@@ -4,8 +4,6 @@ import (
 	"log"
 	"sync"
 	"time"
-
-	"gorm.io/gorm/clause"
 )
 
 var InsertChannel []Tile
@@ -31,10 +29,8 @@ func UpdateTileDbLoop() {
 			log.Println("tile to insert is ", tile)
 
 			// TODO: This should update if it's not there already
-			Database.Clauses(clause.OnConflict{
-				Columns:   []clause.Column{{Name: "x"}, {Name: "y"}},
-				UpdateAll: true,
-			}).Create(&tile)
+
+			Database.Save(&tile)
 
 			updatesToSend.NewTiles = append(updatesToSend.NewTiles, tile)
 		}
