@@ -28,12 +28,13 @@ export const CATEGORY_ICONS: Record<string, string> = {
 
 interface MapProps {
   tileCanvas: HTMLCanvasElement | null,
-  tileCanvasContext: CanvasRenderingContext2D | null
+  tileCanvasUpdate: boolean
+  setTileCanvasUpdate: any
 }
 
 // ------------------------------------------ //
 
-export default function Map({ tileCanvas, tileCanvasContext }: MapProps) {
+export default function Map({ tileCanvas, tileCanvasUpdate, setTileCanvasUpdate }: MapProps) {
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [buildingData, setBuildingData] = useState<any>(null);
 
@@ -193,7 +194,7 @@ export default function Map({ tileCanvas, tileCanvasContext }: MapProps) {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      <Grid map={map} opacity={0.5} tileCanvas={tileCanvas} tileCanvasContext={tileCanvasContext} />
+      <Grid map={map} opacity={0.5} tileCanvas={tileCanvas} tileCanvasUpdate={tileCanvasUpdate} setTileCanvasUpdate={setTileCanvasUpdate} />
       <ColorPicker selectedColor={selectedColor} onSelect={setSelectedColor} />
     </div>
   );

@@ -10,8 +10,6 @@ import { getLocation } from '../../api/location';
 
 const METERS_PER_CELL = 5;
 
-const TEMPORARY_COLOR = 15;
-
 export const TILE_SIZE = 10000;
 export const SQUARE_SIZE = 5
 
@@ -29,12 +27,13 @@ interface GridProps {
   map: Map | null;
   opacity: number;
   tileCanvas: HTMLCanvasElement | null
-  tileCanvasContext: CanvasRenderingContext2D | null
+  tileCanvasUpdate: boolean
+  setTileCanvasUpdate: any
 }
 
 // ------------------------------------------ //
 
-export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext }: GridProps) {
+export default function GridTiles({ map, opacity, tileCanvas, tileCanvasUpdate, setTileCanvasUpdate }: GridProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const glRef = useRef<WebGLRenderingContext | null>(null);
   const tilesRef = useRef<GridTile[]>([]);
@@ -96,6 +95,7 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
     const id = `${tileX}-${tileY}`;
     const existingIndex = tilesRef.current.findIndex((t) => t.id === id);
     if (existingIndex >= 0) {
+      console.log("setting tiles ref here")
       tilesRef.current[existingIndex] = { id, tileX, tileY, image, texture: tilesRef.current[existingIndex].texture };
     } else {
       tilesRef.current.push({ id, tileX, tileY, image });
@@ -105,16 +105,20 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
 
   //TEMPORARY!!!!
   useEffect(() => {
-    console.log("tilecanvas happy and equal ", tileCanvas)
-    if (tileCanvas != null) {
-      setTile(0, 0, tileCanvas)
+    console.log("should tile canvas update ", tileCanvasUpdate)
+    if (tileCanvasUpdate) {
+      console.log("tilecanvas happy and equal ", tileCanvas)
+      if (tileCanvas != null) {
+        setTile(0, 0, tileCanvas)
+      }
+      setTileCanvasUpdate(false)
     }
-  }, [tileCanvasContext]);
+  }, [tileCanvasUpdate]);
 
 
   // --------------------- //
 
-  const createTexture = (gl: WebGLRenderingContext, image: HTMLImageElement) => {
+  const createTexture = (gl: WebGLRenderingContext, image: HTMLCanvasElement) => {
     const texture = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(
@@ -132,6 +136,23 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
     return texture;
   };
 
+
+  const updateTexture = (gl: WebGLRenderingContext, tile: GridTile) => {
+    console.log("updating texture")
+    gl.bindTexture(gl.TEXTURE_2D, tile!.texture);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      gl.RGBA,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      tile.image
+    );
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  };
   // --------------------- //
 
   const drawTiles = () => {
@@ -211,6 +232,7 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
 
       // create texture if not exists
       if (!tile.texture) tile.texture = createTexture(gl, tile.image);
+      else if (tileCanvasUpdate) updateTexture(gl, tile)
       gl.bindTexture(gl.TEXTURE_2D, tile.texture);
 
       gl.uniform1i(u_image, 0);
@@ -247,12 +269,14 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
       if (lng >= imgNW.lng && lng < imgSE.lng && lat <= imgNW.lat && lat > imgSE.lat) {
         const col = Math.floor((lng - imgNW.lng) / cellWidthDeg);
         const row = Math.floor((imgNW.lat - lat) / cellHeightDeg);
+
+        // const color = map.
         let loc: [number, number] | null = await getLocation();
         if (!loc) {
           console.log("no location");
           return;
         }
-        const tile: Tile = { "x": row, "y": col, "color": TEMPORARY_COLOR, "lat": loc![0], "long": loc![1] }
+        const tile: Tile = { "x": row, "y": col, "color": 15, "lat": loc![0], "long": loc![1] }
         sendTileUpdate(tile);
       }
     }

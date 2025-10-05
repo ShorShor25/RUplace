@@ -10,7 +10,7 @@ import LogoutButton from '@/components/logout-button';
 
 export default function Draw() {
   const [tileCanvas, setTileCanvas] = useState<HTMLCanvasElement | null>(null);
-  const [tileCanvasContext, setTileCanvasContext] = useState<CanvasRenderingContext2D | null>(null);
+  const [tileCanvasUpdate, setTileCanvasUpdate] = useState<boolean>(false);
   const [mustInitialize, setMustInitialize] = useState(false);
 
   useEffect(() => {
@@ -30,6 +30,8 @@ export default function Draw() {
   useEffect(() => {
     if (mustInitialize) {
       const run = async () => {
+        const colours = ["red", "green", "blue"]
+        var num = 0
         if (tileCanvas != null) {
           const tile: Tile = { "x": 0, "y": 0, "color": 6, "lat": 69.69, "long": 47.74 };
           initSocket();
@@ -43,10 +45,10 @@ export default function Draw() {
               console.log("drawing tile ", tile)
 
               square!.fillStyle = COLOURS[tile.color]
-              square!.fillRect(tile.x * SQUARE_SIZE, tile.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+              square!.fillRect(Math.floor(tile.y / SQUARE_SIZE) * SQUARE_SIZE, Math.floor(tile.x / SQUARE_SIZE) * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
             })
-            setTileCanvasContext(square)
-
+            setTileCanvas(tileCanvas)
+            setTileCanvasUpdate(true)
           })
 
           setTimeout(async () => {
@@ -63,7 +65,7 @@ export default function Draw() {
   return (
     <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
       <LogoutButton />
-      <Map tileCanvas={tileCanvas} tileCanvasContext={tileCanvasContext} />
+      <Map tileCanvas={tileCanvas} tileCanvasUpdate={tileCanvasUpdate} setTileCanvasUpdate={setTileCanvasUpdate} />
     </main>
   );
 
