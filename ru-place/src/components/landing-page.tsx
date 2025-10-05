@@ -10,45 +10,27 @@ export default function RUplaceLanding() {
   return (
     <div className="flex h-screen w-full bg-black">
       {/* Left Side - Description with Canvas */}
-        <div className="relative w-1/2 flex flex-col justify-center items-center p-16 overflow-hidden">
+      <div className="relative w-1/2 flex flex-col justify-center items-center p-16 overflow-hidden">
         <div className="relative z-10 max-w-xl space-y-10">
-            {/* Blocky Title */}
-            <div className="space-y-6">
-            <h1 
-                className="text-8xl font-extrabold uppercase tracking-tight text-white leading-none"
-                style={{ fontFamily: "'Press Start 2P', monospace" }} // retro/blocky font
+          {/* Blocky Title */}
+          <div className="space-y-6">
+            <h1
+              className="text-8xl font-extrabold uppercase tracking-tight text-white leading-none"
+              style={{ fontFamily: "'Press Start 2P', monospace" }} // retro/blocky font
             >
-                RU<span className="text-red-600">PLACE</span>
+              RU<span className="text-red-600">PLACE</span>
             </h1>
 
-            </div>
+          </div>
 
-            {/* Punchier Subtitle */}
-            <p className="text-2xl text-gray-300 leading-snug font-medium tracking-wider" style={{ fontFamily: "'Press Start 2P', monospace" }}>
-            Drop pixels. Claim space. 
-            </p>
-
-            {/* Feature Grid */}
-            <div className="grid grid-cols-2 gap-6 pt-10">
-            <div className="space-y-2 bg-zinc-900/80 rounded-2xl p-5 border border-zinc-800 hover:border-white-500 transition">
-                <h3 className="text-white font-extrabold text-lg uppercase tracking-wide" style={{ fontFamily: "'Press Start 2P', monospace" }}>Rutgers Canvas</h3>
-                <p className="text-gray-400 text-sm" style={{ fontFamily: "'Press Start 2P', monospace" }}>Drop pixels anywhere</p>
-            </div>
-            <div className="space-y-2 bg-zinc-900/80 rounded-2xl p-5 border border-zinc-800 hover:border-white-500 transition">
-                <h3 className="text-white font-extrabold text-lg uppercase tracking-wide" style={{ fontFamily: "'Press Start 2P', monospace" }}>Live Updates</h3>
-                <p className="text-gray-400 text-sm" style={{ fontFamily: "'Press Start 2P', monospace" }}>Real-time drawing</p>
-            </div>
-            <div className="space-y-2 bg-zinc-900/80 rounded-2xl p-5 border border-zinc-800 hover:border-white-500 transition">
-                <h3 className="text-white font-extrabold text-lg uppercase tracking-wide" style={{ fontFamily: "'Press Start 2P', monospace" }}>Abundunt Palette</h3>
-                <p className="text-gray-400 text-sm" style={{ fontFamily: "'Press Start 2P', monospace" }}>Unleash the colors</p>
-            </div>
-            <div className="space-y-2 bg-zinc-900/80 rounded-2xl p-5 border border-zinc-800 hover:border-white-500 transition">
-                <h3 className="text-white font-extrabold text-lg uppercase tracking-wide" style={{ fontFamily: "'Press Start 2P', monospace" }}>Community</h3>
-                <p className="text-gray-400 text-sm" style={{ fontFamily: "'Press Start 2P', monospace" }}>Build together</p>
-            </div>
-            </div>
+          {/* Punchier Subtitle */}
+          <p className="text-2xl text-gray-300 leading-snug font-medium tracking-wider" style={{ fontFamily: "'Press Start 2P', monospace" }}>
+            A collaborative digital canvas.<br></br>
+            Claim space on the Rutgers map.<br></br>
+            Make art in real time.
+          </p>
         </div>
-        </div>
+      </div>
 
 
       {/* Right Side - Discord Login */}
