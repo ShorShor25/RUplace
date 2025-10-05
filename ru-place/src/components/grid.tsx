@@ -271,7 +271,6 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasUpdate, 
         const col = Math.floor((lng - imgNW.lng) / cellWidthDeg);
         const row = Math.floor((imgNW.lat - lat) / cellHeightDeg);
 
-        // const color = map.
         let loc: [number, number] | null = await getLocation();
         if (!loc) {
           console.log("no location");
