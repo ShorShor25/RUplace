@@ -44,16 +44,19 @@ func wsProcessRecv(c *websocket.Conn) {
 		// If the client expicitly wants a region of tiles
 		case "clientTileFill":
 			var fillParams ClientTileFillParams
+
 			json.Unmarshal(rpc.Payload, &fillParams)
+			log.Println("fill params ", fillParams.XMax)
 
 			// Call the DB
 			coords, err := gorm.G[Tile](Database).Where("x >= ?", fillParams.XMin).Where("x <= ?", fillParams.XMax).Where("y >= ?", fillParams.YMin).Where("y <= ?", fillParams.YMax).Find(DatabaseCtx)
+			log.Println("got tiles ", coords)
 			if err != nil {
 				log.Println("can't query the db for tiles ", err)
 				return
 			}
 
-			sendTileJsonBytes, err := json.Marshal(ServerUpdate{UpdateType: "serverTileUpdate", Payload: coords})
+			sendTileJsonBytes, err := json.Marshal(ServerUpdate{UpdateType: "serverTileUpdate", Payload: ServerTileUpdate{NewTiles: coords}})
 			if err != nil {
 				log.Println("couldn't convert tile file event to json: ", err)
 			}

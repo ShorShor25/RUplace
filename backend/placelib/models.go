@@ -30,8 +30,8 @@ type ClientRPC struct {
 }
 
 type ClientTileFillParams struct {
-	XMin uint64
-	XMax uint64
-	YMin uint64
-	YMax uint64
+	XMin uint64 `json:"xmin"`
+	XMax uint64 `json:"xmax"`
+	YMin uint64 `json:"ymin"`
+	YMax uint64 `json:"ymax"`
 }
