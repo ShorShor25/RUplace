@@ -1,18 +1,20 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Map } from 'maplibre-gl';
 
 // ------------------------------------------ //
 
 const METERS_PER_CELL = 5;
-const TILE_SIZE = 2048;
+
+export const TILE_SIZE = 10000;
+export const SQUARE_SIZE = 5
 
 // ------------------------------------------ //
 
 interface Tile {
   id: string;
-  image: HTMLImageElement; // now an Image instead of HTMLCanvasElement
+  image: HTMLCanvasElement; // now an Image instead of HTMLCanvasElement
   tileX: number;
   tileY: number;
   texture?: WebGLTexture;
@@ -21,11 +23,13 @@ interface Tile {
 interface GridProps {
   map: Map | null;
   opacity: number;
+  tileCanvas: HTMLCanvasElement
+  tileCanvasContext: CanvasRenderingContext2D
 }
 
 // ------------------------------------------ //
 
-export default function GridTiles({ map, opacity }: GridProps) {
+export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext }: GridProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const glRef = useRef<WebGLRenderingContext | null>(null);
   const tilesRef = useRef<Tile[]>([]);
@@ -83,7 +87,7 @@ export default function GridTiles({ map, opacity }: GridProps) {
 
   // --------------------- //
 
-  const setTile = (tileX: number, tileY: number, image: HTMLImageElement) => {
+  const setTile = (tileX: number, tileY: number, image: HTMLCanvasElement) => {
     const id = `${tileX}-${tileY}`;
     const existingIndex = tilesRef.current.findIndex((t) => t.id === id);
     if (existingIndex >= 0) {
@@ -96,14 +100,11 @@ export default function GridTiles({ map, opacity }: GridProps) {
 
   //TEMPORARY!!!!
   useEffect(() => {
-    const imgRed = new Image();
-    imgRed.src = '/test_image.jpg';
-    imgRed.onload = () => setTile(0, 0, imgRed);
-
-    const imgGreen = new Image();
-    imgGreen.src = '/test_image.jpg';
-    imgGreen.onload = () => setTile(0, 1, imgGreen);
-  }, []);
+    console.log("tilecanvas happy and equal ", tileCanvas)
+    if (tileCanvas != null) {
+      setTile(0, 0, tileCanvas)
+    }
+  }, [tileCanvasContext]);
 
 
   // --------------------- //
