@@ -1,23 +1,23 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 
 import maplibregl, { LngLatBoundsLike, LngLatLike } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import Grid from '@/components/grid';
+import { useEffect, useRef, useState } from 'react';
+import Grid from './grid';
 import ColorPicker from './picker';
 
 // ------------------------------------------ //
 
-const STARTING_POSITION: LngLatLike = [-74.446, 40.4987];
-const STARTING_ZOOM = 17;
+export const STARTING_POSITION: LngLatLike = [-74.446, 40.4987];
+export const STARTING_ZOOM = 17;
 
-const BOUNDS: LngLatBoundsLike = [
+export const BOUNDS: LngLatBoundsLike = [
   [-74.603555, 40.419001],
   [-74.229596, 40.578769]
 ];
 
-const CATEGORY_ICONS: Record<string, string> = {
+export const CATEGORY_ICONS: Record<string, string> = {
   academic: 'book',
   housing: 'house',
   studentLife: 'people',
@@ -25,9 +25,15 @@ const CATEGORY_ICONS: Record<string, string> = {
   default: 'marker'
 };
 
+
+interface MapProps {
+  tileCanvas: HTMLCanvasElement,
+  tileCanvasContext: CanvasRenderingContext2D
+}
+
 // ------------------------------------------ //
 
-export default function Map() {
+export default function Map({ tileCanvas, tileCanvasContext }: MapProps) {
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [buildingData, setBuildingData] = useState<any>(null);
 
@@ -229,7 +235,7 @@ export default function Map() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
       <div ref={mapContainer} style={{ width: '100%', height: '100%' }} />
-      <Grid map={map} opacity={0.5} />
+      <Grid map={map} opacity={0.5} tileCanvas={tileCanvas} tileCanvasContext={tileCanvasContext} />
       <ColorPicker selectedColor={selectedColor} onSelect={setSelectedColor} />
     </div>
   );
