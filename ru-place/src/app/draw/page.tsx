@@ -1,10 +1,12 @@
 import Map from '@/components/map';
 import LogoutButton from '@/components/logout-button';
-import { sendTileUpdate } from '../../../websocket/wsocket';
+import LocationButton from '@/components/location-button';
+import { sendTileUpdate } from '../../../api/wsocket';
 import { Tile } from '../../../shared/tile'
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../../pages/api/auth/[...nextauth]";
-import { redirect } from "next/navigation"; { }
+import { redirect } from "next/navigation";
+import { getLocation } from '../../../api/location'
 
 export default async function Home() {
     const session = await getServerSession(authOptions);
@@ -16,6 +18,7 @@ export default async function Home() {
 
     return (
         <main style={{ height: '100vh', width: '100%', position: 'relative' }}>
+            <LocationButton />
             <LogoutButton />
             <Map />
         </main>
