@@ -1,5 +1,5 @@
 "use client"
-import { initSocket, sendTileUpdate, socket } from '../../../api/wsocket';
+import { initialTileLoad, initSocket, sendTileUpdate, socket } from '../../../api/wsocket';
 import { Tile } from '../../../shared/tile'
 import { getLocation } from '../../../api/location'
 import { SQUARE_SIZE, TILE_SIZE } from '@/components/grid';
@@ -52,8 +52,8 @@ export default function Draw() {
           })
 
           setTimeout(async () => {
-            await sendTileUpdate(tile);
-          }, 3000)
+              await initialTileLoad();
+          }, 1000)
         }
 
         setMustInitialize(false)

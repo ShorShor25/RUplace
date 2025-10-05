@@ -1,5 +1,6 @@
 import { COLOURS } from "@/components/picker";
 import { Tile } from "../shared/tile";
+import { TILE_SIZE } from "@/components/grid";
 
 export let socket: WebSocket | null = null;
 
@@ -15,3 +16,9 @@ export async function sendTileUpdate(tile: Tile) {
     socket!.send(JSON.stringify(rpc));
 }
 
+
+
+export async function initialTileLoad() {
+    const rpc = { rpcName: "clientTileFill", payload: { xmin: 0, xmax: TILE_SIZE, ymin: 0, ymax: TILE_SIZE } };
+    socket!.send(JSON.stringify(rpc));
+}
