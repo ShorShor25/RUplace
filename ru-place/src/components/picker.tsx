@@ -13,6 +13,7 @@ export const COLOURS = [
   "#b04d8a","#d17997","#e0a2ad","#732816","#964a2c","#ba7947",
   "#d9b484","#fffece"
 ];
+export var pickerSelectedColor = 0
 
 // ------------------------------------------ //
 
@@ -29,6 +30,7 @@ export default function ColorPicker({ selectedColor: initial, onSelect }: ColorP
   // --------------------- //
 
   const handleClick = (index: number) => {
+    pickerSelectedColor = index;
     setSelectedColor(index);
     onSelect?.(index);
   }

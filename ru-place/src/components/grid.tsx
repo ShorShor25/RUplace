@@ -5,6 +5,7 @@ import { Map } from 'maplibre-gl';
 import { sendTileUpdate } from '../../api/wsocket';
 import { Tile } from '../../shared/tile';
 import { getLocation } from '../../api/location';
+import { pickerSelectedColor } from './picker';
 
 // ------------------------------------------ //
 
@@ -276,7 +277,7 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasUpdate, 
           console.log("no location");
           return;
         }
-        const tile: Tile = { "x": row, "y": col, "color": 15, "lat": loc![0], "long": loc![1] }
+        const tile: Tile = { "x": row, "y": col, "color": pickerSelectedColor, "lat": loc![0], "long": loc![1] }
         sendTileUpdate(tile);
       }
     }
