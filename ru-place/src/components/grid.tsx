@@ -250,6 +250,7 @@ export default function GridTiles({ map, opacity, tileCanvas, tileCanvasContext 
         let loc: [number, number] | null = await getLocation();
         if (!loc) {
           console.log("no location");
+          return;
         }
         const tile: Tile = { "x": row, "y": col, "color": TEMPORARY_COLOR, "lat": loc![0], "long": loc![1] }
         sendTileUpdate(tile);
